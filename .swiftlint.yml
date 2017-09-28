@@ -29,13 +29,13 @@ identifier_name:
   min_length:
     error: 3
   excluded:
-    - sb
+    - id
     
 file_header:
   required_pattern: |
                     \/\/
                     \/\/  .*?\.swift
-                    \/\/  SwiftyBeaverProvider
+                    \/\/  (Sanitize|SanitizeTests)
                     \/\/
                     \/\/  Created by .*? on \d{1,2}\/\d{1,2}\/\d{2}\.
                     \/\/  Copyright © \d{4} Gustavo Perdomo\. All rights reserved\.
