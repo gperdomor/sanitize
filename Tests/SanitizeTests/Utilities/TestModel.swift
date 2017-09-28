@@ -8,6 +8,7 @@
 
 import Node
 import JSON
+import Vapor
 
 @testable import Sanitize
 
@@ -23,12 +24,34 @@ class TestModel: Sanitizable {
         name = try json.get("name")
         email = try json.get("email")
     }
+}
 
-    func makeNode(in context: Context?) throws -> Node {
-        return try Node(node: [
-            "id": id as Any,
-            "name": name,
-            "email": email
-            ])
+extension TestModel {
+    static func preSanitize(data: JSON) throws {
+        guard data["name"]?.string != nil else {
+            throw Abort(
+                .badRequest,
+                metadata: nil,
+                reason: "No name provided."
+            )
+        }
+
+        guard data["email"]?.string != nil else {
+            throw Abort(
+                .badRequest,
+                metadata: nil,
+                reason: "No email provided."
+            )
+        }
+    }
+
+    func postSanitize() throws {
+        guard email.characters.count > 8 else {
+            throw Abort(
+                .badRequest,
+                metadata: nil,
+                reason: "Email must be longer than 8 characters."
+            )
+        }
     }
 }

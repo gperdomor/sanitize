@@ -1,0 +1,12 @@
+version: 2
+
+jobs:
+  build:
+    docker:
+      - image: swiftdocker/swift:latest
+
+    steps:
+      - checkout
+      - run: swift build
+      - run: swift build -c release
+      - run: swift test

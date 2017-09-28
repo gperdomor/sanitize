@@ -7,11 +7,16 @@ matrix:
     - os: osx
       osx_image: xcode8.3
 
+before_install:
+  brew tap vapor/tap;
+  brew update;
+  brew install vapor;
+
 script:
     - swift build
     - swift build -c release
     - swift package generate-xcodeproj
-    - xcodebuild -scheme SwiftyBeaverProvider -enableCodeCoverage YES test | xcpretty  # instead of swift test
+    - xcodebuild -scheme Sanitize -enableCodeCoverage YES test | xcpretty
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)

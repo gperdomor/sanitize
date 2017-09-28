@@ -74,17 +74,41 @@ class SanitizeTests: XCTestCase {
     func testInjectingSanitizedKeys() throws {
         let request = TestDataBuilder.getRequest(body: [
             "id": 1,
-            "name": "Brett",
-            "email": "test@tested.com"
+            "name": "John Appleseed",
+            "email": "domain@example.com"
             ])
 
-            let model: TestModel = try request.extractModel(
-                injecting: ["id": 1337]
-            )
+        let model: TestModel = try request.extractModel(
+            injecting: ["id": 1337]
+        )
 
-            XCTAssertEqual(model.id, 1337)
-            XCTAssertEqual(model.name, "Brett")
-            XCTAssertEqual(model.email, "test@tested.com")
+        XCTAssertEqual(model.id, 1337)
+        XCTAssertEqual(model.name, "John Appleseed")
+        XCTAssertEqual(model.email, "domain@example.com")
+    }
+
+    // MARK: - Validation.
+
+    func testPreSanitizeError() {
+        let request = TestDataBuilder.getRequest(body: [
+            "email": "domain@example.com"
+            ])
+
+        assertError(Abort(.badRequest, metadata: nil, reason: "No name provided.")) {
+            let _: TestModel = try request.extractModel()
+        }
+    }
+
+    func testPostSanitizeError() {
+        let request = TestDataBuilder.getRequest(body: [
+            "id": 1,
+            "name": "John Appleseed",
+            "email": "d@e.com"
+            ])
+
+        assertError(Abort(.badRequest, metadata: nil, reason: "Email must be longer than 8 characters.")) {
+            let _: TestModel = try request.extractModel()
+        }
     }
 }
 
@@ -112,7 +136,9 @@ extension SanitizeTests {
         ("testBasicFailed", testBasicFailed),
         ("testInjectingNewKeys", testInjectingNewKeys),
         ("testOverridingKeys", testOverridingKeys),
-        ("testInjectingSanitizedKeys", testInjectingSanitizedKeys)
+        ("testInjectingSanitizedKeys", testInjectingSanitizedKeys),
+        ("testPreSanitizeError", testPreSanitizeError),
+        ("testPostSanitizeError", testPostSanitizeError)
     ]
 }
 

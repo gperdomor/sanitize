@@ -39,6 +39,12 @@ extension Request {
             sanitized[key] = JSON(value)
         }
 
-        return try M(json: sanitized)
+        try M.preSanitize(data: sanitized)
+
+        let model: M = try M(json: sanitized)
+
+        try model.postSanitize()
+
+        return model
     }
 }
