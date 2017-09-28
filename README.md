@@ -28,7 +28,7 @@ or for Swift 4:
 
 ### Model
 ```swift
-import Sanitized
+import Sanitize
 ```
 
 Before you're able to extract your model from a request it needs to conform to
