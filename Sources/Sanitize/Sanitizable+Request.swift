@@ -15,7 +15,9 @@ extension Request {
     ///
     /// - Throws:
     ///     - badRequest: Thrown when the request doesn't have a JSON body.
-    ///
+    ///     - CustomError: `Sanitizable` models have the ability to throw errors
+    ///         when a model fails to instantiate using the `preSanitize` and
+    ///         `postSanitize` methods.
     /// - Returns: The extracted, sanitized object.
     public func extractModel<M>() throws -> M where M: Sanitizable {
         return try extractModel(injecting: .null)
@@ -28,6 +30,10 @@ extension Request {
     /// - Returns: The extracted, sanitized object.
     /// - Throws:
     ///     - badRequest: Thrown when the request doesn't have a JSON body.
+    ///     - CustomError: `Sanitizable` models have the ability to throw errors
+    ///         when a model fails to instantiate using the `preSanitize` and
+    ///         `postSanitize` methods.
+    /// - Returns: The extracted, sanitized object.
     public func extractModel<M>(injecting values: Node) throws -> M where M: Sanitizable {
         guard let json = self.json else {
             throw Abort.badRequest

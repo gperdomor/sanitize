@@ -1,0 +1,19 @@
+module: Sanitize
+
+author: Gustavo Perdomo
+author_url: https://github.com/gperdomor
+github_url: https://github.com/gperdomor/sanitize
+
+copyright: Copyright (c) 2017 Gustavo Perdomo
+
+swift_version: "4.0"
+
+readme: README.md
+
+module_version: 1.0.0
+
+xcodebuild_arguments:
+  - "-scheme"
+  - "Sanitize-Package"
+
+output: docs
