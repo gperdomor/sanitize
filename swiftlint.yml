@@ -1,0 +1,42 @@
+included:
+  - Sources
+  - Tests
+  
+excluded:
+  - Packages
+  - .build
+  - .vscode
+
+opt_in_rules:
+  - empty_count
+  - force_unwrapping
+  - file_header
+
+force_cast: warning
+
+force_try:
+  severity: warning # explicitly. Give warning only for force try
+
+type_body_length:
+  warning: 300
+  error: 400
+
+function_body_length:
+  warning: 50
+  error: 80
+
+identifier_name:
+  min_length:
+    error: 3
+  excluded:
+    - sb
+    
+file_header:
+  required_pattern: |
+                    \/\/
+                    \/\/  .*?\.swift
+                    \/\/  SwiftyBeaverProvider
+                    \/\/
+                    \/\/  Created by .*? on \d{1,2}\/\d{1,2}\/\d{2}\.
+                    \/\/  Copyright © \d{4} Gustavo Perdomo\. All rights reserved\.
+reporter: "emoji"
