@@ -27,16 +27,15 @@ or for Swift 4:
 ## Usage
 
 ### Model
-```swift
-import Sanitize
-```
 
 Before you're able to extract your model from a request it needs to conform to
 the protocol `Sanitizable` adding a `[String]` named `allowedKeys` with a list
 of keys you wish to allow:
 
 ```swift
-class TestModel: Sanitizable { // or struct
+import Sanitize
+
+class User: Sanitizable { // or struct
     var id: Node?
     var name: String
     var email: String
@@ -64,7 +63,7 @@ Now that you have a conforming model, you can safely extract it from a Request
 
 ```swift
 drop.post("model") { req in
-    var user: TestModel = try req.extractModel()
+    var user: User = try req.extractModel()
     print(user.id == nil) // prints `true` because was removed (`id` is not a allowed key)
     try user.save()
     return user
@@ -77,7 +76,7 @@ You can also configure some `preSanitize` and `postSanitize` validations,
 this validations will be executed before and after model initialization.
 
 ```swift
-extension TestModel {
+extension User {
     static func preSanitize(data: JSON) throws {
         guard data["name"]?.string != nil else {
             throw Abort(
