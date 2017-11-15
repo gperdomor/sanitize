@@ -6,10 +6,12 @@ jobs:
       xcode: "9.0"
     steps:
       - run: brew install vapor/tap/vapor
+      - run: sudo gem install xcpretty
       - checkout
       - run: swift build
       - run: swift build -c release
-      - run: swift test
+      - run: swift package generate-xcodeproj		
+      - run: xcodebuild -scheme Sanitize-Package -enableCodeCoverage YES test | xcpretty
       - run: bash <(curl -s https://codecov.io/bash)
 
   linux-3:
