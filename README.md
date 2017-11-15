@@ -1,9 +1,8 @@
 [![Swift Version](https://img.shields.io/badge/Swift-3.1_and_4.0-brightgreen.svg)](http://swift.org)
 [![Vapor Version](https://img.shields.io/badge/Vapor-2-brightgreen.svg)](http://vapor.codes)
-[![Linux Build Status](https://img.shields.io/circleci/project/github/gperdomor/sanitize.svg?label=Linux)](https://circleci.com/gh/gperdomor/sanitize)
-[![macOS Build Status](https://img.shields.io/travis/gperdomor/sanitize.svg?label=macOS)](https://travis-ci.org/gperdomor/sanitize)
+[![Build Status](https://img.shields.io/circleci/project/github/gperdomor/sanitize.svg?label=Build)](https://circleci.com/gh/gperdomor/sanitize)
 [![codebeat badge](https://codebeat.co/badges/96ac7dc6-b1a7-4cc5-bb95-8a33f967bb65)](https://codebeat.co/projects/github-com-gperdomor-sanitize-master)
-[![codecov](https://codecov.io/gh/gperdomor/sanitize/branch/master/graph/badge.svg)](https://codecov.io/gh/gperdomor/sanitize)
+[![codecov](https://img.shields.io/codecov/c/github/gperdomor/sanitize.svg)](https://codecov.io/gh/gperdomor/sanitize)
 [![GitHub license](https://img.shields.io/badge/license-MIT-brightgreen.svg)](LICENSE)
 
 # Sanitize
