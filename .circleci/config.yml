@@ -14,17 +14,7 @@ jobs:
       - run: xcodebuild -scheme Sanitize-Package -enableCodeCoverage YES test | xcpretty
       - run: bash <(curl -s https://codecov.io/bash)
 
-  linux-3:
-    docker:
-      - image: swift:3.1.1
-    steps:
-      - run: apt-get install -yq libssl-dev
-      - checkout
-      - run: swift build
-      - run: swift build -c release
-      - run: swift test
-
-  linux-4:
+  linux:
     docker:
       - image: swift:4.0.2
     steps:
@@ -39,5 +29,4 @@ workflows:
   tests:
     jobs:
       - macos
-      - linux-3
-      - linux-4
+      - linux

@@ -9,20 +9,17 @@
 // swiftlint:disable force_try
 
 import HTTP
-import JSON
-import Node
+@testable import Sanitize
 
 class TestDataBuilder {
-    static func getRequest(body: Node) -> Request {
-        let body = try! JSON(node: body).makeBytes()
-
+    static func getRequest(body: JSON) throws -> Request {
         return Request(
             method: .post,
             uri: "/sanitize",
             headers: [
                 "Content-Type": "application/json"
             ],
-            body: .data(body)
+            body: Body(try body.data())
         )
     }
 

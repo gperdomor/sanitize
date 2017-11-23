@@ -6,8 +6,8 @@
 //  Copyright © 2017 Gustavo Perdomo. All rights reserved.
 //
 
+import Foundation
 import HTTP
-import Node
 import Vapor
 
 extension Request {
@@ -20,7 +20,7 @@ extension Request {
     ///         `postSanitize` methods.
     /// - Returns: The extracted, sanitized object.
     public func extractModel<M>() throws -> M where M: Sanitizable {
-        return try extractModel(injecting: .null)
+        return try extractModel(injecting: nil)
     }
 
     /// Extracts a object from the Request's JSON, first by adding/overriding
@@ -34,20 +34,24 @@ extension Request {
     ///         when a model fails to instantiate using the `preSanitize` and
     ///         `postSanitize` methods.
     /// - Returns: The extracted, sanitized object.
-    public func extractModel<M>(injecting values: Node) throws -> M where M: Sanitizable {
-        guard let json = self.json else {
-            throw Abort.badRequest
+    public func extractModel<M>(injecting values: JSON?) throws -> M where M: Sanitizable {
+        guard let contentType = self.headers[.contentType], MediaType.json.description.hasPrefix(contentType),
+            let json = try JSONSerialization.jsonObject(with: self.body.data, options: []) as? JSON else {
+                throw Abort(.badRequest)
         }
 
         var sanitized = json.sanitize(M.allowedKeys)
 
-        values.object?.forEach { key, value in
-            sanitized[key] = JSON(value)
+        values?.forEach { key, value in
+            sanitized[key] = value
         }
 
         try M.preSanitize(data: sanitized)
 
-        let model: M = try M(json: sanitized)
+        let data = try JSONSerialization.data(withJSONObject: sanitized)
+
+        let decoder = JSONDecoder()
+        let model: M = try decoder.decode(M.self, from: data)
 
         try model.postSanitize()
 
