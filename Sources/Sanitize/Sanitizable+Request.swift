@@ -47,11 +47,8 @@ extension Request {
         }
 
         try M.preSanitize(data: sanitized)
-
-        let data = try JSONSerialization.data(withJSONObject: sanitized)
-
-        let decoder = JSONDecoder()
-        let model: M = try decoder.decode(M.self, from: data)
+        
+        let model: M = try JSONDecoder().decode(M.self, from: sanitized.data())
 
         try model.postSanitize()
 
