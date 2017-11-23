@@ -1,5 +1,5 @@
-[![Swift Version](https://img.shields.io/badge/Swift-3.1_and_4.0-brightgreen.svg)](http://swift.org)
-[![Vapor Version](https://img.shields.io/badge/Vapor-2-brightgreen.svg)](http://vapor.codes)
+[![Swift Version](https://img.shields.io/badge/Swift-4.0-brightgreen.svg)](http://swift.org)
+[![Vapor Version](https://img.shields.io/badge/Vapor-3-brightgreen.svg)](http://vapor.codes)
 [![Build Status](https://img.shields.io/circleci/project/github/gperdomor/sanitize.svg?label=Build)](https://circleci.com/gh/gperdomor/sanitize)
 [![codebeat badge](https://codebeat.co/badges/96ac7dc6-b1a7-4cc5-bb95-8a33f967bb65)](https://codebeat.co/projects/github-com-gperdomor-sanitize-master)
 [![codecov](https://img.shields.io/codecov/c/github/gperdomor/sanitize.svg)](https://codecov.io/gh/gperdomor/sanitize)
@@ -14,13 +14,7 @@ Powerful model extraction from JSON requests.
 Add this project to the `Package.swift` dependencies of your Vapor project:
 
 ```swift
-  .Package(url: "https://github.com/gperdomor/sanitize.git", majorVersion: 1)
-```
-
-or for Swift 4:
-
-```swift
-  .package(url: "https://github.com/gperdomor/sanitize.git", from: "1.0.0")
+  .package(url: "https://github.com/gperdomor/sanitize.git", from: "2.0.0")
 ```
 
 ## Usage
@@ -80,7 +74,6 @@ extension User {
         guard data["name"]?.string != nil else {
             throw Abort(
                 .badRequest,
-                metadata: nil,
                 reason: "No name provided."
             )
         }
@@ -88,7 +81,6 @@ extension User {
         guard data["email"]?.string != nil else {
             throw Abort(
                 .badRequest,
-                metadata: nil,
                 reason: "No email provided."
             )
         }
@@ -98,7 +90,6 @@ extension User {
         guard email.characters.count > 8 else {
             throw Abort(
                 .badRequest,
-                metadata: nil,
                 reason: "Email must be longer than 8 characters."
             )
         }
