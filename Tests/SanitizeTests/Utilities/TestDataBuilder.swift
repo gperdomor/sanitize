@@ -12,19 +12,19 @@ import HTTP
 @testable import Sanitize
 
 class TestDataBuilder {
-    static func getRequest(body: JSON) throws -> Request {
-        return Request(
+    static func getRequest(body: JSON) throws -> HTTPRequest {
+        return HTTPRequest(
             method: .post,
             uri: "/sanitize",
             headers: [
                 "Content-Type": "application/json"
             ],
-            body: Body(try body.data())
+            body: HTTPBody(try body.data())
         )
     }
 
-    static func buildInvalidRequest() -> Request {
-        return Request(
+    static func buildInvalidRequest() -> HTTPRequest {
+        return HTTPRequest(
             method: .post,
             uri: "/sanitize"
         )

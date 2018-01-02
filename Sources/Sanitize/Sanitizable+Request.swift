@@ -10,7 +10,7 @@ import Foundation
 import HTTP
 import Vapor
 
-extension Request {
+extension HTTPRequest {
     /// Extracts an model from the Request's JSON, first stripping sensitive fields.
     ///
     /// - Throws:
@@ -35,8 +35,8 @@ extension Request {
     ///         `postSanitize` methods.
     /// - Returns: The extracted, sanitized object.
     public func extractModel<M>(injecting values: JSON?) throws -> M where M: Sanitizable {
-        guard let contentType = self.headers[.contentType], MediaType.json.description.hasPrefix(contentType),
-            let json = try JSONSerialization.jsonObject(with: self.body.data) as? JSON else {
+        guard let data = self.body.data, let contentType = self.headers[.contentType], MediaType.json.description.hasPrefix(contentType),
+            let json = try JSONSerialization.jsonObject(with: data) as? JSON else {
                 throw Abort(.badRequest)
         }
 
