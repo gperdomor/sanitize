@@ -47,7 +47,7 @@ extension Request {
         }
 
         try M.preSanitize(data: sanitized)
-        
+
         let model: M = try JSONDecoder().decode(M.self, from: sanitized.data())
 
         try model.postSanitize()
