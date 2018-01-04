@@ -29,7 +29,7 @@ of keys you wish to allow:
 import Sanitize
 
 class User: Sanitizable { // or struct
-    var id: Node?
+    var id: Int?
     var name: String
     var email: String
 
@@ -55,11 +55,13 @@ Now that you have a conforming model, you can safely extract it from a Request
 ### Routes
 
 ```swift
-drop.post("model") { req in
-    var user: User = try req.extractModel()
-    print(user.id == nil) // prints `true` because was removed (`id` is not a allowed key)
-    try user.save()
-    return user
+router.post("sanitize-example") { req -> Response in
+    let user: User = try req.extractModel()
+
+    let res = Response.init(using: self.app)
+    try res.content.encode(user, as: .json)
+
+    return res
 }
 ```
 
@@ -71,23 +73,24 @@ this validations will be executed before and after model initialization.
 ```swift
 extension User {
     static func preSanitize(data: JSON) throws {
-        guard data["name"]?.string != nil else {
+        print(data)
+        guard data["name"] as? String != nil else {
             throw Abort(
                 .badRequest,
                 reason: "No name provided."
             )
         }
-
-        guard data["email"]?.string != nil else {
+        
+        guard data["email"] as? String != nil else {
             throw Abort(
                 .badRequest,
                 reason: "No email provided."
             )
         }
     }
-
+    
     func postSanitize() throws {
-        guard email.characters.count > 8 else {
+        guard email.count > 8 else {
             throw Abort(
                 .badRequest,
                 reason: "Email must be longer than 8 characters."

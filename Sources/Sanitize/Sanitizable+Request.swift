@@ -10,7 +10,7 @@ import Foundation
 import HTTP
 import Vapor
 
-extension HTTPRequest {
+extension Request {
     /// Extracts an model from the Request's JSON, first stripping sensitive fields.
     ///
     /// - Throws:
