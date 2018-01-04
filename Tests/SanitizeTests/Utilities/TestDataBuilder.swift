@@ -9,11 +9,12 @@
 // swiftlint:disable force_try
 
 import HTTP
+import Vapor
 @testable import Sanitize
 
 class TestDataBuilder {
-    static func getRequest(body: JSON) throws -> HTTPRequest {
-        return HTTPRequest(
+    static func getRequest(body: JSON, for container: Container) throws -> Request {
+        let httpRequest =  HTTPRequest(
             method: .post,
             uri: "/sanitize",
             headers: [
@@ -21,12 +22,16 @@ class TestDataBuilder {
             ],
             body: HTTPBody(try body.data())
         )
+
+        return Request(http: httpRequest, using: container)
     }
 
-    static func buildInvalidRequest() -> HTTPRequest {
-        return HTTPRequest(
+    static func buildInvalidRequest(for container: Container) -> Request {
+        let httpRequest =  HTTPRequest(
             method: .post,
             uri: "/sanitize"
         )
+
+        return Request(http: httpRequest, using: container)
     }
 }

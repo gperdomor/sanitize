@@ -13,13 +13,25 @@ import Vapor
 @testable import Sanitize
 
 class SanitizeTests: XCTestCase {
+    var app: Application!
+
+    override func setUp() {
+        super.setUp()
+
+        self.app = try? Application(
+            config: Config.default(),
+            environment: Environment.detect(),
+            services: Services.default()
+        )
+    }
+
     // MARK: - Extraction.
     func testBasic() throws {
         let req = try TestDataBuilder.getRequest(body: [
             "id": 1,
             "name": "John Appleseed",
             "email": "domain@example.com"
-            ])
+            ], for: app)
 
         let model: TestModel = try req.extractModel()
         XCTAssertNil(model.id)
@@ -28,7 +40,7 @@ class SanitizeTests: XCTestCase {
     }
 
     func testBasicFailed() throws {
-        let request = TestDataBuilder.buildInvalidRequest()
+        let request = TestDataBuilder.buildInvalidRequest(for: app)
 
         assertError(Abort(.badRequest)) {
             let _: TestModel = try request.extractModel()
@@ -41,7 +53,7 @@ class SanitizeTests: XCTestCase {
         let request = try TestDataBuilder.getRequest(body: [
             "id": 1,
             "name": "John Appleseed"
-            ])
+            ], for: app)
 
         let model: TestModel = try request.extractModel(
             injecting: ["email": "domain@example.com"]
@@ -57,7 +69,7 @@ class SanitizeTests: XCTestCase {
             "id": 1,
             "name": "John Appleseed",
             "email": "domain@example.com"
-            ])
+            ], for: app)
 
         let model: TestModel = try request.extractModel(
             injecting: ["email": "domain@overrided.com"]
@@ -74,7 +86,7 @@ class SanitizeTests: XCTestCase {
             "id": 1,
             "name": "John Appleseed",
             "email": "domain@example.com"
-            ])
+            ], for: app)
 
         let model: TestModel = try request.extractModel(
             injecting: ["id": 1337]
@@ -90,7 +102,7 @@ class SanitizeTests: XCTestCase {
     func testPreSanitizeError() throws {
         let request = try TestDataBuilder.getRequest(body: [
             "email": "domain@example.com"
-            ])
+            ], for: app)
 
         assertError(Abort(.badRequest, reason: "No name provided.")) {
             let _: TestModel = try request.extractModel()
@@ -102,7 +114,7 @@ class SanitizeTests: XCTestCase {
             "id": 1,
             "name": "John Appleseed",
             "email": "d@e.com"
-            ])
+            ], for: app)
 
         assertError(Abort(.badRequest, reason: "Email must be longer than 8 characters.")) {
             let _: TestModel = try request.extractModel()
