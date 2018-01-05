@@ -20,7 +20,7 @@ class SanitizeTests: XCTestCase {
 
         self.app = try? Application(
             config: Config.default(),
-            environment: Environment.detect(),
+            environment: Environment.testing,
             services: Services.default()
         )
     }
