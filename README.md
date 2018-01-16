@@ -14,8 +14,10 @@ Powerful model extraction from JSON requests.
 Add this project to the `Package.swift` dependencies of your Vapor project:
 
 ```swift
-  .package(url: "https://github.com/gperdomor/sanitize.git", from: "2.0.0")
+  .package(url: "https://github.com/gperdomor/sanitize.git", .branch("beta"))
 ```
+
+> Alert: Some changes to Vapor 3 could break this PR, so in that case, wait until a new update was made
 
 ## Usage
 
@@ -56,9 +58,13 @@ Now that you have a conforming model, you can safely extract it from a Request
 
 ```swift
 router.post("sanitize-example") { req -> Response in
+    // User without 'id' because in not an allowedKey
     let user: User = try req.extractModel()
+    
+    // User with 'id' equals to 123 because is injected
+    let otherUser: User = try req.extractModel(injecting: ["id": 123])
 
-    let res = Response.init(using: self.app)
+    let res = Response(using: self.app)
     try res.content.encode(user, as: .json)
 
     return res

@@ -35,7 +35,8 @@ extension Request {
     ///         `postSanitize` methods.
     /// - Returns: The extracted, sanitized object.
     public func extractModel<M>(injecting values: JSON?) throws -> M where M: Sanitizable {
-        guard let data = self.body.data, let contentType = self.headers[.contentType], MediaType.json.description.hasPrefix(contentType),
+        let data = try body.makeData(max: 1_000_000).await(on: self)
+        guard let contentType = self.headers[.contentType], MediaType.json.description.hasPrefix(contentType),
             let json = try JSONSerialization.jsonObject(with: data) as? JSON else {
                 throw Abort(.badRequest)
         }
