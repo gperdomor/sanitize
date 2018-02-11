@@ -6,30 +6,30 @@
 //  Copyright © 2017 Gustavo Perdomo. All rights reserved.
 //
 
-// swiftlint:disable force_try
-
 import HTTP
-import JSON
-import Node
+import Vapor
+@testable import Sanitize
 
 class TestDataBuilder {
-    static func getRequest(body: Node) -> Request {
-        let body = try! JSON(node: body).makeBytes()
-
-        return Request(
+    static func getRequest(body: JSON, for container: Container) throws -> Request {
+        let httpRequest =  HTTPRequest(
             method: .post,
             uri: "/sanitize",
             headers: [
                 "Content-Type": "application/json"
             ],
-            body: .data(body)
+            body: HTTPBody(try body.data())
         )
+
+        return Request(http: httpRequest, using: container)
     }
 
-    static func buildInvalidRequest() -> Request {
-        return Request(
+    static func buildInvalidRequest(for container: Container) -> Request {
+        let httpRequest =  HTTPRequest(
             method: .post,
             uri: "/sanitize"
         )
+
+        return Request(http: httpRequest, using: container)
     }
 }

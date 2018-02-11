@@ -1,8 +1,16 @@
+// swift-tools-version:4.0
 import PackageDescription
 
 let package = Package(
     name: "Sanitize",
+    products: [
+        .library(name: "Sanitize", targets: ["Sanitize"])
+    ],
     dependencies: [
-        .Package(url: "https://github.com/vapor/vapor.git", majorVersion: 2)
+        .package(url: "https://github.com/vapor/vapor.git", .exact("3.0.0-beta.1")),
+    ],
+    targets: [
+        .target(name: "Sanitize", dependencies: ["Vapor"]),
+        .testTarget(name: "SanitizeTests", dependencies: ["Sanitize"])
     ]
 )

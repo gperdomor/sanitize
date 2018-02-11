@@ -6,15 +6,16 @@
 //  Copyright © 2017 Gustavo Perdomo. All rights reserved.
 //
 
-import JSON
-import Node
+import Foundation
+
+public typealias JSON = [String: Any]
 
 /// A request-extractable object.
-public protocol Sanitizable: JSONInitializable {
-    /// Keys that are permitted to be deserialized from a Request's JSON.
+public protocol Sanitizable: Decodable {
+    /// Keys that are permitted to be deserialized from a Request's body.
     static var allowedKeys: [String] { get }
 
-    /// Validate the Request's JSON before constructing a Model.
+    /// Validate the Request's body before constructing a Model.
     /// Useful for checking if fields exist.
     static func preSanitize(data: JSON) throws
 

@@ -13,28 +13,26 @@ import Vapor
 @testable import Sanitize
 
 class JSONTests: XCTestCase {
-
     // MARK: - Extraction.
-
     func testPermitted() {
-        let json = JSON([
+        let json: JSON = [
             "id": 1,
             "name": "Brett",
             "email": "test@tested.com"
-            ])
+            ]
 
         let result = json.sanitize(["name"])
         XCTAssertNil(result["id"])
-        XCTAssertEqual(result["name"]?.string, "Brett")
+        XCTAssertEqual(result["name"] as? String, "Brett")
         XCTAssertNil(result["email"])
     }
 
     func testEmptyPermitted() {
-        let json = JSON([
+        let json: JSON = [
             "id": 1,
             "name": "Brett",
             "email": "test@tested.com"
-            ])
+            ]
 
         let result = json.sanitize([])
         XCTAssertNil(result["id"])
@@ -49,11 +47,7 @@ extension JSONTests {
         #if os(macOS) || os(iOS) || os(tvOS) || os(watchOS)
             let thisClass = type(of: self)
             let linuxCount = thisClass.allTests.count
-            #if swift(>=4.0)
-                let darwinCount = Int(thisClass.defaultTestSuite.testCaseCount)
-            #else
-                let darwinCount = Int(thisClass.defaultTestSuite().testCaseCount)
-            #endif
+            let darwinCount = Int(thisClass.defaultTestSuite.testCaseCount)
 
             XCTAssertEqual(linuxCount, darwinCount, "\(darwinCount - linuxCount) tests are missing from allTests")
         #endif

@@ -13,15 +13,25 @@ import Vapor
 @testable import Sanitize
 
 class SanitizeTests: XCTestCase {
+    var app: Application!
+
+    override func setUp() {
+        super.setUp()
+
+        self.app = try? Application(
+            config: Config.default(),
+            environment: Environment.testing,
+            services: Services.default()
+        )
+    }
 
     // MARK: - Extraction.
-
     func testBasic() throws {
-        let req = TestDataBuilder.getRequest(body: [
+        let req = try TestDataBuilder.getRequest(body: [
             "id": 1,
             "name": "John Appleseed",
             "email": "domain@example.com"
-            ])
+            ], for: app)
 
         let model: TestModel = try req.extractModel()
         XCTAssertNil(model.id)
@@ -30,9 +40,9 @@ class SanitizeTests: XCTestCase {
     }
 
     func testBasicFailed() throws {
-        let request = TestDataBuilder.buildInvalidRequest()
+        let request = TestDataBuilder.buildInvalidRequest(for: app)
 
-        assertError(Abort.badRequest) {
+        assertError(Abort(.badRequest)) {
             let _: TestModel = try request.extractModel()
         }
     }
@@ -40,10 +50,10 @@ class SanitizeTests: XCTestCase {
     // MARK: - Injection.
 
     func testInjectingNewKeys() throws {
-        let request = TestDataBuilder.getRequest(body: [
+        let request = try TestDataBuilder.getRequest(body: [
             "id": 1,
             "name": "John Appleseed"
-            ])
+            ], for: app)
 
         let model: TestModel = try request.extractModel(
             injecting: ["email": "domain@example.com"]
@@ -55,11 +65,11 @@ class SanitizeTests: XCTestCase {
     }
 
     func testOverridingKeys() throws {
-        let request = TestDataBuilder.getRequest(body: [
+        let request = try TestDataBuilder.getRequest(body: [
             "id": 1,
             "name": "John Appleseed",
             "email": "domain@example.com"
-            ])
+            ], for: app)
 
         let model: TestModel = try request.extractModel(
             injecting: ["email": "domain@overrided.com"]
@@ -72,11 +82,11 @@ class SanitizeTests: XCTestCase {
     }
 
     func testInjectingSanitizedKeys() throws {
-        let request = TestDataBuilder.getRequest(body: [
+        let request = try TestDataBuilder.getRequest(body: [
             "id": 1,
             "name": "John Appleseed",
             "email": "domain@example.com"
-            ])
+            ], for: app)
 
         let model: TestModel = try request.extractModel(
             injecting: ["id": 1337]
@@ -89,24 +99,24 @@ class SanitizeTests: XCTestCase {
 
     // MARK: - Validation.
 
-    func testPreSanitizeError() {
-        let request = TestDataBuilder.getRequest(body: [
+    func testPreSanitizeError() throws {
+        let request = try TestDataBuilder.getRequest(body: [
             "email": "domain@example.com"
-            ])
+            ], for: app)
 
-        assertError(Abort(.badRequest, metadata: nil, reason: "No name provided.")) {
+        assertError(Abort(.badRequest, reason: "No name provided.")) {
             let _: TestModel = try request.extractModel()
         }
     }
 
-    func testPostSanitizeError() {
-        let request = TestDataBuilder.getRequest(body: [
+    func testPostSanitizeError() throws {
+        let request = try TestDataBuilder.getRequest(body: [
             "id": 1,
             "name": "John Appleseed",
             "email": "d@e.com"
-            ])
+            ], for: app)
 
-        assertError(Abort(.badRequest, metadata: nil, reason: "Email must be longer than 8 characters.")) {
+        assertError(Abort(.badRequest, reason: "Email must be longer than 8 characters.")) {
             let _: TestModel = try request.extractModel()
         }
     }
@@ -164,6 +174,6 @@ func assertError<E: Error, ReturnType>(
 
 extension Abort: Equatable {
     static public func == (lhs: Abort, rhs: Abort) -> Bool {
-        return lhs.identifier == rhs.identifier && lhs.reason == rhs.reason
+        return lhs.status == rhs.status && lhs.reason == rhs.reason
     }
 }

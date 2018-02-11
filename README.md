@@ -1,5 +1,5 @@
-[![Swift Version](https://img.shields.io/badge/Swift-3.1_and_4.0-brightgreen.svg)](http://swift.org)
-[![Vapor Version](https://img.shields.io/badge/Vapor-2-brightgreen.svg)](http://vapor.codes)
+[![Swift Version](https://img.shields.io/badge/Swift-4.0-brightgreen.svg)](http://swift.org)
+[![Vapor Version](https://img.shields.io/badge/Vapor-3-brightgreen.svg)](http://vapor.codes)
 [![Build Status](https://img.shields.io/circleci/project/github/gperdomor/sanitize.svg?label=Build)](https://circleci.com/gh/gperdomor/sanitize)
 [![codebeat badge](https://codebeat.co/badges/96ac7dc6-b1a7-4cc5-bb95-8a33f967bb65)](https://codebeat.co/projects/github-com-gperdomor-sanitize-master)
 [![codecov](https://img.shields.io/codecov/c/github/gperdomor/sanitize.svg)](https://codecov.io/gh/gperdomor/sanitize)
@@ -14,14 +14,10 @@ Powerful model extraction from JSON requests.
 Add this project to the `Package.swift` dependencies of your Vapor project:
 
 ```swift
-  .Package(url: "https://github.com/gperdomor/sanitize.git", majorVersion: 1)
+  .package(url: "https://github.com/gperdomor/sanitize.git", .branch("beta"))
 ```
 
-or for Swift 4:
-
-```swift
-  .package(url: "https://github.com/gperdomor/sanitize.git", from: "1.0.0")
-```
+> Alert: Some changes to Vapor 3 could break this PR, so in that case, wait until a new update was made
 
 ## Usage
 
@@ -35,7 +31,7 @@ of keys you wish to allow:
 import Sanitize
 
 class User: Sanitizable { // or struct
-    var id: Node?
+    var id: Int?
     var name: String
     var email: String
 
@@ -61,11 +57,17 @@ Now that you have a conforming model, you can safely extract it from a Request
 ### Routes
 
 ```swift
-drop.post("model") { req in
-    var user: User = try req.extractModel()
-    print(user.id == nil) // prints `true` because was removed (`id` is not a allowed key)
-    try user.save()
-    return user
+router.post("sanitize-example") { req -> Response in
+    // User without 'id' because in not an allowedKey
+    let user: User = try req.extractModel()
+    
+    // User with 'id' equals to 123 because is injected
+    let otherUser: User = try req.extractModel(injecting: ["id": 123])
+
+    let res = Response(using: self.app)
+    try res.content.encode(user, as: .json)
+
+    return res
 }
 ```
 
@@ -77,28 +79,26 @@ this validations will be executed before and after model initialization.
 ```swift
 extension User {
     static func preSanitize(data: JSON) throws {
-        guard data["name"]?.string != nil else {
+        print(data)
+        guard data["name"] as? String != nil else {
             throw Abort(
                 .badRequest,
-                metadata: nil,
                 reason: "No name provided."
             )
         }
-
-        guard data["email"]?.string != nil else {
+        
+        guard data["email"] as? String != nil else {
             throw Abort(
                 .badRequest,
-                metadata: nil,
                 reason: "No email provided."
             )
         }
     }
-
+    
     func postSanitize() throws {
-        guard email.characters.count > 8 else {
+        guard email.count > 8 else {
             throw Abort(
                 .badRequest,
-                metadata: nil,
                 reason: "Email must be longer than 8 characters."
             )
         }
