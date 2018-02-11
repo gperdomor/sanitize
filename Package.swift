@@ -7,7 +7,7 @@ let package = Package(
         .library(name: "Sanitize", targets: ["Sanitize"])
     ],
     dependencies: [
-        .package(url: "https://github.com/vapor/vapor.git", .branch("beta"))
+        .package(url: "https://github.com/vapor/vapor.git", .exact("3.0.0-beta.1")),
     ],
     targets: [
         .target(name: "Sanitize", dependencies: ["Vapor"]),

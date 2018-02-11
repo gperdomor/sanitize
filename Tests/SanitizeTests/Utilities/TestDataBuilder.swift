@@ -6,8 +6,6 @@
 //  Copyright © 2017 Gustavo Perdomo. All rights reserved.
 //
 
-// swiftlint:disable force_try
-
 import HTTP
 import Vapor
 @testable import Sanitize
